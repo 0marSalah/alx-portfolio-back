@@ -1,4 +1,4 @@
-# time_tracker_pro Backend using Nodejs + Expressjs + Prisma
+# Alx Portfolio Project  -- Backend -- using Nodejs + Prisma ORM
 
 ## installing dependecies Using yarn (recommended)
 1- yarn | npm i
