@@ -4,7 +4,7 @@
 1- yarn | npm i
 
 The main idea of the project is manage Task Manager with capbility add tasks to projects and tasks without project assign to user
-# First USER HANDLER
+# USER HANDLER
 ## Table of Contents
 - [Signup](#signup)
 - [Signin](#signin)
@@ -58,7 +58,7 @@ The `deleteUser` function allows an administrator to delete a user. It first che
 **HTTP Method:** DELETE
 
 ---
-# Second PROJECT HANDLER
+# PROJECT HANDLER
 ## Table of Contents
 - [Create Project](#create-project)
 - [Update Project](#update-project)
@@ -104,7 +104,7 @@ The `deleteProject` function allows the deletion of a project. It expects a DELE
 **HTTP Method:** DELETE
 
 ---
-# 3rd TASKS HANDLER
+# TASKS HANDLER
 ## Table of Contents
 - [Create Task](#create-task)
 - [Get Tasks](#get-tasks)
