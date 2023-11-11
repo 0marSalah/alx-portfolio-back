@@ -2,7 +2,7 @@ import { Response } from 'express';
 import prisma from '../prismaconnect';
 import { Req } from '../types/api';
 
-const isValidComingDate = (startDate: Date, endDate: Date) => {
+export const isValidComingDate = (startDate: Date, endDate: Date) => {
   return startDate > new Date() && endDate > new Date();
 };
 
@@ -11,11 +11,13 @@ export const createProject = async (req: Req, res: Response) => {
   try {
     const { name, description, status, startDate, endDate } = req.body;
 
-    if (!isValidComingDate(startDate, endDate)) {
-      return res.status(400).json({
-        status: 'failed',
-        error: 'invalid Date.'
-      });
+    if (startDate && endDate) {
+      if (!isValidComingDate(startDate, endDate)) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'invalid Date.'
+        });
+      }
     }
 
     const project = await prisma.project.create({
@@ -44,6 +46,15 @@ export const updateProject = async (req: Req, res: Response) => {
   try {
     const { id } = req.params;
     const { name, description, status, startDate, endDate } = req.body;
+
+    if (startDate && endDate) {
+      if (!isValidComingDate(startDate, endDate)) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'invalid Date.'
+        });
+      }
+    }
 
     const project = await prisma.project.update({
       where: {

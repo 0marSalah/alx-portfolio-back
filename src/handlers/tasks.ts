@@ -1,17 +1,28 @@
 import { Response } from 'express';
 import { Req } from '../types/api';
 import prisma from '../prismaconnect';
+import { isValidComingDate } from './projects';
 
 export const createTask = async (req: Req, res: Response) => {
   try {
     const { name, description, status, startDate, endDate } = req.body;
+
+    if (startDate && endDate) {
+      if (!isValidComingDate(startDate, endDate)) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'invalid Date.'
+        });
+      }
+    }
+
     const task = await prisma.task.create({
       data: {
-        name: name,
-        description: description,
-        status: status,
-        startDate: startDate,
-        endDate: endDate,
+        name,
+        description,
+        status,
+        startDate,
+        endDate,
         user: {
           connect: {
             id: req?.user?.id
@@ -58,7 +69,7 @@ export const getTask = async (req: Req, res: Response) => {
     if (!task) {
       return res
         .status(404)
-        .json({ status: 'failed', message: 'Task not found' });
+        .json({ status: 'failed', error: 'Task not found' });
     }
     res.json({ status: 'success', data: task });
   } catch (e) {
@@ -71,6 +82,15 @@ export const updateTask = async (req: Req, res: Response) => {
   try {
     const { id } = req.params;
     const { name, description, status, startDate, endDate } = req.body;
+
+    if (startDate && endDate) {
+      if (!isValidComingDate(startDate, endDate)) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'invalid Date.'
+        });
+      }
+    }
 
     const task = await prisma.task.update({
       where: {
@@ -87,7 +107,7 @@ export const updateTask = async (req: Req, res: Response) => {
     if (!task) {
       return res
         .status(404)
-        .json({ status: 'failed', message: 'Task not found' });
+        .json({ status: 'failed', error: 'Task not found' });
     }
 
     res.json({ status: 'success', data: task });
@@ -108,7 +128,7 @@ export const deleteTask = async (req: Req, res: Response) => {
     if (!deletedTask) {
       return res
         .status(404)
-        .json({ status: 'failed', message: 'Task not found' });
+        .json({ status: 'failed', error: 'Task not found' });
     }
     res.json({ status: 'success', data: deletedTask });
   } catch (e) {

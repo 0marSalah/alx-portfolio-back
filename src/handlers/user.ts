@@ -48,14 +48,14 @@ export const signin = async (req: Request, res: Res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ status: 'failed', message: 'User not found' });
+        .json({ status: 'failed', error: 'User not found' });
     }
 
     const isValidPassword = await comparePasswords(password, user.password);
     if (!isValidPassword) {
       return res
         .status(401)
-        .json({ status: 'failed', message: 'Invalid password' });
+        .json({ status: 'failed', error: 'Invalid password' });
     }
 
     const token = createToken(user);
@@ -64,7 +64,7 @@ export const signin = async (req: Request, res: Res) => {
     console.log(e);
     res.status(500).json({
       status: 'failed',
-      message: 'email or password is undefined - Internal server error.'
+      error: 'email or password is undefined - Internal server error.'
     });
   }
 };
@@ -108,7 +108,7 @@ export const deleteUser = async (req: Req, res: Res) => {
   if (admin && admin.role !== process.env.ADMIN_ROLE) {
     return res
       .status(401)
-      .json({ status: 'failed', message: 'get out of here mf!' });
+      .json({ status: 'failed', error: 'get out of here mf!' });
   }
   const { id } = req.params;
   const user = await prisma.user.delete({

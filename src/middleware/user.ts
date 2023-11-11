@@ -7,11 +7,11 @@ export const verifyUser = async (req: any, res: any, next: any) => {
 
   const token = req.headers.authorization;
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
   const bearer = token.split(' ')[1];
   if (!bearer) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
