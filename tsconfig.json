@@ -6,5 +6,5 @@
     "lib": ["esnext"],
     "esModuleInterop": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts"]
 }
