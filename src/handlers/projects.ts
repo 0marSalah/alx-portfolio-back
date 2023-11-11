@@ -2,16 +2,29 @@ import { Response } from 'express';
 import prisma from '../prismaconnect';
 import { Req } from '../types/api';
 
+const isValidComingDate = (startDate: Date, endDate: Date) => {
+  return startDate > new Date() && endDate > new Date();
+};
+
 // create project
 export const createProject = async (req: Req, res: Response) => {
   try {
-    const { name, description, status } = req.body;
+    const { name, description, status, startDate, endDate } = req.body;
+
+    if (!isValidComingDate(startDate, endDate)) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'invalid Date.'
+      });
+    }
 
     const project = await prisma.project.create({
       data: {
         name,
         description,
         status,
+        startDate,
+        endDate,
         user: {
           connect: {
             id: req.user?.id
@@ -20,17 +33,17 @@ export const createProject = async (req: Req, res: Response) => {
       }
     });
 
-    res.json({ project });
+    res.json({ status: 'success', data: project });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
 export const updateProject = async (req: Req, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, status } = req.body;
+    const { name, description, status, startDate, endDate } = req.body;
 
     const project = await prisma.project.update({
       where: {
@@ -39,17 +52,21 @@ export const updateProject = async (req: Req, res: Response) => {
       data: {
         name,
         description,
-        status
+        status,
+        startDate,
+        endDate
       }
     });
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', error: 'Project not found' });
     }
 
-    res.json({ project });
+    res.json({ status: 'success', data: project });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -64,13 +81,15 @@ export const getProjects = async (req: Req, res: Response) => {
       }
     });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', error: 'User not found' });
     }
 
-    res.json({ data: user.projects });
+    res.json({ status: 'success', data: user.projects });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -82,13 +101,15 @@ export const getProject = async (req: Req, res: Response) => {
       }
     });
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', error: 'Project not found' });
     }
 
-    res.json({ data: project });
+    res.json({ status: 'success', data: project });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -100,12 +121,14 @@ export const deleteProject = async (req: Req, res: Response) => {
       }
     });
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', error: 'Project not found' });
     }
 
-    res.json({ data: project });
+    res.json({ status: 'success', data: project });
   } catch (e) {
     console.log(e);
-    res.json({ error: 'Internal server error.' });
+    res.json({ status: 'failed', error: 'Internal server error.' });
   }
 };

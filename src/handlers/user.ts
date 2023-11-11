@@ -17,16 +17,21 @@ export const signup = async (req: Request, res: Res) => {
     const token = createToken(user);
 
     res.json({
+      status: 'success',
       data: user,
       token
     });
   } catch (e: any) {
     if (e.code === 'P2002' && e.meta?.target?.includes('email')) {
       console.log(e);
-      res.status(400).json({ error: 'Email address is already in use.' });
+      res
+        .status(400)
+        .json({ status: 'failed', error: 'Email address is already in use.' });
     } else {
       console.log(e);
-      res.status(500).json({ error: 'Internal server error.' });
+      res
+        .status(500)
+        .json({ status: 'failed', error: 'Internal server error.' });
     }
   }
 };
@@ -41,12 +46,16 @@ export const signin = async (req: Request, res: Res) => {
       }
     });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', message: 'User not found' });
     }
 
     const isValidPassword = await comparePasswords(password, user.password);
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid password' });
+      return res
+        .status(401)
+        .json({ status: 'failed', message: 'Invalid password' });
     }
 
     const token = createToken(user);
@@ -54,7 +63,8 @@ export const signin = async (req: Request, res: Res) => {
   } catch (e: any) {
     console.log(e);
     res.status(500).json({
-      error: 'email or password is undefined - Internal server error.'
+      status: 'failed',
+      message: 'email or password is undefined - Internal server error.'
     });
   }
 };
@@ -71,11 +81,8 @@ export const updateUser = async (req: Request, res: Res) => {
       name
     }
   });
-  // if (req.user.id != id) {
-  //   return res.status(401).json({ message: 'Unauthorized' });
-  // }
 
-  res.json({ data: user });
+  res.json({ status: 'success', data: user });
 };
 
 export const getUser = async (req: Req, res: Res) => {
@@ -84,12 +91,12 @@ export const getUser = async (req: Req, res: Res) => {
       id: req.user?.id
     }
   });
-  res.json({ user });
+  res.json({ status: 'success', data: user });
 };
 
 export const getUsers = async (req: Request, res: Res) => {
   const users = await prisma.user.findMany();
-  res.json({ data: users });
+  res.json({ status: 'success', data: users });
 };
 
 export const deleteUser = async (req: Req, res: Res) => {
@@ -99,7 +106,9 @@ export const deleteUser = async (req: Req, res: Res) => {
     }
   });
   if (admin && admin.role !== process.env.ADMIN_ROLE) {
-    return res.status(401).json({ message: 'get out of here mf!' });
+    return res
+      .status(401)
+      .json({ status: 'failed', message: 'get out of here mf!' });
   }
   const { id } = req.params;
   const user = await prisma.user.delete({
@@ -107,5 +116,5 @@ export const deleteUser = async (req: Req, res: Res) => {
       id: id
     }
   });
-  res.json({ data: user });
+  res.json({ status: 'success', data: user });
 };

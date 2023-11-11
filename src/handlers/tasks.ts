@@ -4,11 +4,14 @@ import prisma from '../prismaconnect';
 
 export const createTask = async (req: Req, res: Response) => {
   try {
+    const { name, description, status, startDate, endDate } = req.body;
     const task = await prisma.task.create({
       data: {
-        name: req.body.name,
-        description: req.body.description,
-        status: req.body.status,
+        name: name,
+        description: description,
+        status: status,
+        startDate: startDate,
+        endDate: endDate,
         user: {
           connect: {
             id: req?.user?.id
@@ -21,10 +24,10 @@ export const createTask = async (req: Req, res: Response) => {
         }
       }
     });
-    res.json({ data: task });
+    res.json({ status: 'success', data: task });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -38,10 +41,10 @@ export const getTasks = async (req: Req, res: Response) => {
         tasks: true
       }
     });
-    res.json({ data: user?.tasks });
+    res.json({ status: 'success', data: user?.tasks });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -53,19 +56,21 @@ export const getTask = async (req: Req, res: Response) => {
       }
     });
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', message: 'Task not found' });
     }
-    res.json({ data: task });
+    res.json({ status: 'success', data: task });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
 export const updateTask = async (req: Req, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, status } = req.body;
+    const { name, description, status, startDate, endDate } = req.body;
 
     const task = await prisma.task.update({
       where: {
@@ -74,17 +79,21 @@ export const updateTask = async (req: Req, res: Response) => {
       data: {
         name,
         description,
-        status
+        status,
+        startDate,
+        endDate
       }
     });
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', message: 'Task not found' });
     }
 
-    res.json({ data: task });
+    res.json({ status: 'success', data: task });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
 
@@ -97,11 +106,13 @@ export const deleteTask = async (req: Req, res: Response) => {
       }
     });
     if (!deletedTask) {
-      return res.status(404).json({ message: 'Task not found' });
+      return res
+        .status(404)
+        .json({ status: 'failed', message: 'Task not found' });
     }
-    res.json({ data: deletedTask });
+    res.json({ status: 'success', data: deletedTask });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ status: 'failed', error: 'Internal server error.' });
   }
 };
