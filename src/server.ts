@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+const cors = require('cors').default;
 import {
   deleteUser,
   getUser,
@@ -12,12 +13,13 @@ import { verifyUser } from './middleware/user';
 import router from './router';
 
 const app = express();
+app.use(cors());
 app.use(express.json()); // you cant response with json without this middleware
 
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  res.send('Hello World');
+  res.send('Hello World!');
 });
 
 app.use('/api', verifyUser, router);
