@@ -3,7 +3,7 @@
 ## installing dependecies Using yarn (recommended)
 1- yarn | npm i
 
-The main idea of the project is manage Task Manager with capbility add tasks to projects and tasks without project assign to user
+The main idea of the project is Task Manager with capbility add tasks to projects and tasks without project assign to user
 # USER HANDLER
 ## Table of Contents
 - [Signup](#signup)
