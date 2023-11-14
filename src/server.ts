@@ -1,6 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
-const cors = require('cors').default;
+import cors from 'cors';
 import {
   deleteUser,
   getUser,
