@@ -3,7 +3,7 @@ import prisma from '../prismaconnect';
 import { Req } from '../types/api';
 
 export const isValidComingDate = (startDate: Date, endDate: Date) => {
-  return startDate > new Date() && endDate > new Date();
+  return new Date(startDate) > new Date() && new Date(endDate) > new Date();
 };
 
 // create project
